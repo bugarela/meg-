@@ -106,26 +106,36 @@ geraJogadas' j ts (b:bs) = fromJust (insereJogada j (div b 3) (mod b 3) ts):gera
 alterna X = O
 alterna O = X
 
-tabuleiroResultante ts j = (geraJogadas j ts)!!(snd (melhorJogada ts j))
+--tabuleiroResultante ts j = (geraJogadas j ts)!!(snd (melhorJogada ts j))
+tabuleiroResultante ts j = (fromJust (insereJogada j (div i 3) (mod i 3) ts))
+    where i = (brancos ts)!!(melhorJogada ts j)
 
-melhorJogada [] _ = (-1,0)
-melhorJogada ts j = maior (map (jogadas j) (geraJogadas j ts))
+melhorJogada [] _ = 0
+melhorJogada ts j = snd (maior (map (jogadas j) (geraJogadas j ts)))
+melhorJogada' [] _ = 0
+melhorJogada' ts j = maiorRelativo (map (jogadas j) (geraJogadas j ts))
 
 jogadas _ [] = -1
-jogadas j ts = if vitoria X ts then 0 else (if vitoria O ts then (fat(qtdBrancos ts)) else fst (melhorJogada ts (alterna j)))
+jogadas j ts = if vitoria X ts then 0 else (if vitoria O ts then (fat(qtdBrancos ts)) else melhorJogada' ts (alterna j))
+
+
+maiorRelativo [x] = x
+maiorRelativo (x:xs) = if x > m || x == 0 then x else m
+    where m = maiorRelativo xs 
 
 maior xs = maior' xs 0
-maior' [] e = (-1,0)
+maior' [] _ = (-1,0)
 maior' [x] e = (x,e)
-maior' (x:xs) e = if x > fst(m) || x == 0 then (x,e) else m
+maior' (x:xs) e = if x > fst(m) then (x,e) else m
     where m = maior' xs (e+1)
 
 
 t0 = (fromJust (insereJogada X (div 0 3) (mod 0 3) iniciaTabuleiro))
 t1 = (fromJust (insereJogada O (div 1 3) (mod 1 3) t0))
-t2 = geraJogadas O (fromJust (insereJogada X (div 6 3) (mod 6 3) t1))
+t2 = (fromJust (insereJogada X (div 6 3) (mod 6 3) t1))
+t3 = (fromJust (insereJogada O (div 7 3) (mod 7 3) t2))
+t4 = (fromJust (insereJogada X (div 5 3) (mod 5 3) t3))
+
  
 
 
-
-    
